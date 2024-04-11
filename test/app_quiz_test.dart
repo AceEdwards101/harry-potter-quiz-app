@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/app_quiz.dart';
+import 'package:quiz_app/data/questions.dart';
 import 'package:quiz_app/models/state.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
@@ -44,6 +45,34 @@ void main() {
     // or by looking for a widget key
     final questionTextFinder = find.byKey(const Key('question-text'));
     expect(questionTextFinder, findsOneWidget);
+   
+
+  });
+
+  testWidgets('Progress Test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    
+    await tester.pumpWidget(ChangeNotifierProvider(
+         create: (context) => StateModel(client),
+         child: const Quiz(),
+    ));
+
+    final startFinder = find.text('Start the Quiz');
+    await tester.tap(startFinder);
+    await tester.pump();
+
+     for (int i=0; i<questions.length; i++){
+      var qnum = i+1;
+      final questionsFinder = find.text ("Question ${qnum.toString()}");
+      expect(questionsFinder, findsOneWidget);
+      final answerFinder = find.text(questions[i].answersList[0]);
+      expect(answerFinder, findsOneWidget);
+      await tester.tap(answerFinder);
+      await tester.pump();
+    }
+
+    final resultsFinder= find.text("Restart Quiz");
+    expect(resultsFinder, findsOneWidget);
 
   });
 }

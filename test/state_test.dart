@@ -24,4 +24,27 @@ void main() {
       expect(testState.getCurrentQuestion().questionText, startsWith("What"));
     });
   });
+
+  test('State model checks advance question', () {
+
+    final client = MockClient();
+
+    when(client.get(Uri.parse('https://stevecassidy.github.io/harry-potter-quiz-app/lib/data/questions.json')))
+      .thenAnswer((_) async => http.Response(jsonEncode(questionsJson), 200));
+
+    var testState = StateModel(client);
+    testState.addListener(() {
+          expect(testState.currentQuestionNumber, 6);
+          expect(testState.quizStatus, "complete");
+        });
+  });
+
+
+  // void advanceQuestion() {
+  //   if (++currentQuestion >= _questions.length) {
+  //     _status = "complete";
+  //     notifyListeners();
+  //   }
+  // }
+  
 }
